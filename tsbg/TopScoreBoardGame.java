@@ -8,11 +8,11 @@
  * Second player, knows first player's score and chooses 3*3 section of the board to try and get a higher value.
 */
 
-package tsgb;
+package tsbg;
 
 import java.util.ArrayList;
 import java.util.Random;
-import tsgb.StandardDeviation;
+import tsbg.StandardDeviation;
 
 public class TopScoreBoardGame {
 
@@ -20,6 +20,9 @@ public class TopScoreBoardGame {
     public int boardSizeN;
     public int boardSizeM;
     private Random generator = new Random();
+    private int playerAScore;
+    private int playerBScore;
+    
     
     // Construct random size board (lengths between 0 and 20) and populate with values.
     TopScoreBoardGame(){
@@ -51,7 +54,7 @@ public class TopScoreBoardGame {
     }
     
     // For inputed coordinates get a 3x3 block and choose a random value from it.
-     private int getComputeRandomScore(int m,int n){
+     int getComputeRandomScore(int m,int n){
         
         // Choose random m and n values from the 3x3 section.
         int randomM=generator.nextInt(3)-1; //int between -1 and +1.
@@ -75,8 +78,8 @@ public class TopScoreBoardGame {
         
     }
     
-    // Player A's turn.  Chooses middle of 3x3 group with highest average points.
-    public int[] playerATurn(){
+    // Player A's chooses middle of 3x3 group with highest average points.
+    public int[] playerAChoose(){
         int mStart;
         int mEnd;
         int nStart;
@@ -112,8 +115,8 @@ public class TopScoreBoardGame {
         return new int[]{bestM,bestN};
     }
     
-    // Player B's turn.  Get the most squares with a value greater than Player A's value.  If squares tie use lowest standard deviation.
-    public int[] playerBTurn(int PlayerAScore){
+    // Player B's gets the most squares with a value greater than Player A's value.  If squares tie use lowest standard deviation.
+    public int[] playerBChoose(int PlayerAScore){
         int mStart;
         int mEnd;
         int nStart;
@@ -165,6 +168,37 @@ public class TopScoreBoardGame {
         System.out.println("Player B chooses: ["+bestM+","+bestN+"]");
         return new int[]{bestM,bestN};
     }
+
+    public int playerATurn(){
+        int[] playerAMove=playerAChoose();
+        int playerAScore=getComputeRandomScore(playerAMove[0],playerAMove[1]);
+        System.out.println("Player A scored:  "+playerAScore);
+        this.playerAScore=playerAScore;
+        return playerAScore;
+    }
+    
+    public int playerBTurn(){
+        int[] playerBMove=playerBChoose(playerAScore);
+        int playerBScore=getComputeRandomScore(playerBMove[0],playerBMove[1]);
+        System.out.println("Player B scored:  "+playerBScore);
+        this.playerBScore=playerBScore;
+        return playerBScore;
+    }
+    
+    public char chooseWinningPlayer(){
+        // Print out which player won.
+        int scoreDiff=playerAScore-playerBScore;
+        if (scoreDiff==0){
+            System.out.println("Tie!");
+            return (Character) ' ';
+        }else if (scoreDiff >0) {
+            System.out.println("Player A Wins!");
+            return 'A';
+        }else{
+            System.out.println("Player B Wins!");
+            return 'B';
+        }   
+    }
     
     public static void main(String[] args) {
         // Instantiate and print the board.
@@ -174,22 +208,9 @@ public class TopScoreBoardGame {
         System.out.println();
         
         // Have both players take their turn.
-        int[] playerAMove=tsbg.playerATurn();
-        int playerAScore=tsbg.getComputeRandomScore(playerAMove[0],playerAMove[1]);
-        System.out.println("Player A scored:  "+playerAScore+"\n");
-
-        int[] playerBMove=tsbg.playerBTurn(playerAScore);
-        int playerBScore=tsbg.getComputeRandomScore(playerBMove[0],playerBMove[1]);
-        System.out.println("Player B scored:  "+playerBScore);
-        
-        // Print out which player won.
-        int scoreDiff=playerAScore-playerBScore;
-        if (scoreDiff==0){
-            System.out.println("Tie!");
-        }else if (scoreDiff >0) {
-            System.out.println("Player A Wins!");
-        }else{
-            System.out.println("Player B Wins!");
-        }
+        tsbg.playerATurn();
+        tsbg.playerBTurn();
+       
+        tsbg.chooseWinningPlayer();
     }
 }

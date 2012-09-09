@@ -4,7 +4,7 @@
  * Helper math class for TopScoreBoardGame.
 */
 
-package tsgb;
+package tsbg;
 
 import java.util.ArrayList;
 
